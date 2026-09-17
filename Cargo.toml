@@ -1,0 +1,43 @@
+[package]
+name = "gpx_tile_generator"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.94"
+authors = ["Mark <mkopenga@gmail.com>"]
+license = "WTFPL"
+description = "Render GPS tracks into Web Mercator raster map tiles, on the GPU (wgpu) or CPU."
+repository = "https://github.com/mjarkk/gpx_tile_generator"
+documentation = "https://docs.rs/gpx_tile_generator"
+homepage = "https://github.com/mjarkk/gpx_tile_generator"
+readme = "README.md"
+keywords = ["map", "tiles", "gpx", "mercator", "gps"]
+categories = ["graphics", "rendering", "science::geo", "visualization"]
+exclude = ["/.github"]
+
+[features]
+default = ["gpu"]
+# Batched wgpu rasterizer. Off = CPU-only (tiny-skia) with a much smaller
+# dependency tree; the public API is unchanged either way.
+gpu = ["dep:wgpu", "dep:pollster", "dep:bytemuck"]
+
+[dependencies]
+tiny-skia = "0.11"
+rustc-hash = "2.0"
+half = "2"
+png = "0.17"
+
+# wgpu is gated off wasm32 as well as off the feature: wgpu-on-wasm needs
+# WebGPU and can't `pollster::block_on`. On wasm `TileRasterizer` transparently
+# falls back to the CPU path.
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+wgpu = { version = "29", optional = true }
+pollster = { version = "0.4", optional = true }
+bytemuck = { version = "1", features = ["derive"], optional = true }
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[profile.release]
+lto = true
+codegen-units = 1
