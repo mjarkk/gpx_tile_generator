@@ -10,6 +10,8 @@ behind Leaflet, MapLibre or any XYZ layer. Built for drawing years of recorded
 tracks as a single trace layer, where re-rendering the whole pyramid needs to
 take seconds rather than hours.
 
+![Eight z14 tiles of a synthetic ride set, stitched back together](docs/example.png)
+
 ## What it does
 
 ```text
